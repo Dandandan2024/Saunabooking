@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Session } from '@/types/session'
 import { format, parseISO } from 'date-fns'
+import toast from 'react-hot-toast'
 
 interface BookingModalProps {
   session: Session
@@ -23,17 +24,37 @@ export default function BookingModal({ session, onClose, onBookingSuccess }: Boo
     e.preventDefault()
     
     if (!formData.name || !formData.email) {
-      alert('Please fill in all required fields')
+      toast.error('Please fill in all required fields')
       return
     }
 
     setLoading(true)
     
-    // Simulate booking process
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId: session.id,
+          user: formData
+        }),
+      })
+
+      if (response.ok) {
+        const booking = await response.json()
+        onBookingSuccess()
+        toast.success('Booking successful!')
+      } else {
+        const error = await response.json()
+        toast.error(error.message || 'Failed to create booking')
+      }
+    } catch (error) {
+      toast.error('Failed to create booking')
+    } finally {
       setLoading(false)
-      onBookingSuccess()
-    }, 1000)
+    }
   }
 
   return (
@@ -117,7 +138,7 @@ export default function BookingModal({ session, onClose, onBookingSuccess }: Boo
                 disabled={loading}
                 className="flex-1 bg-sauna-600 hover:bg-sauna-700 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Processing...' : 'Book Session (Demo)'}
+                {loading ? 'Processing...' : 'Book Session'}
               </button>
             </div>
           </form>
