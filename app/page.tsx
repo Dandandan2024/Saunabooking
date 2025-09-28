@@ -1,40 +1,63 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { format, addDays } from 'date-fns'
 import { CalendarDays, Clock, Users, Thermometer, MapPin } from 'lucide-react'
 import Header from '@/components/Header'
 import SessionCard from '@/components/SessionCard'
 import BookingModal from '@/components/BookingModal'
 import { Session } from '@/types/session'
-import toast from 'react-hot-toast'
 
 export default function Home() {
   const [sessions, setSessions] = useState<Session[]>([])
   const [selectedDate, setSelectedDate] = useState(new Date())
-  const [loading, setLoading] = useState(true)
   const [selectedSession, setSelectedSession] = useState<Session | null>(null)
 
-  useEffect(() => {
-    fetchSessions()
-  }, [selectedDate])
-
-  const fetchSessions = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch('/api/sessions')
-      if (response.ok) {
-        const data = await response.json()
-        setSessions(data)
-      } else {
-        toast.error('Failed to load sessions')
-      }
-    } catch (error) {
-      toast.error('Failed to load sessions')
-    } finally {
-      setLoading(false)
+  // Sample data for demonstration
+  const sampleSessions: Session[] = [
+    {
+      id: '1',
+      title: 'Morning Wellness Session',
+      description: 'Start your day with a rejuvenating sauna session',
+      date: addDays(new Date(), 1).toISOString(),
+      startTime: '07:00',
+      endTime: '08:00',
+      capacity: 2,
+      price: 45.00,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      bookings: []
+    },
+    {
+      id: '2',
+      title: 'Afternoon Relaxation',
+      description: 'Perfect for unwinding after a busy day',
+      date: addDays(new Date(), 1).toISOString(),
+      startTime: '15:00',
+      endTime: '16:00',
+      capacity: 3,
+      price: 50.00,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      bookings: []
+    },
+    {
+      id: '3',
+      title: 'Evening Detox Session',
+      description: 'End your day with a cleansing sauna experience',
+      date: addDays(new Date(), 1).toISOString(),
+      startTime: '19:00',
+      endTime: '20:00',
+      capacity: 2,
+      price: 55.00,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      bookings: []
     }
-  }
+  ]
 
   const getAvailableDates = () => {
     const dates = []
@@ -125,31 +148,15 @@ export default function Home() {
             Available Sessions for {format(selectedDate, 'EEEE, MMMM d, yyyy')}
           </h2>
           
-          {loading ? (
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sauna-600"></div>
-            </div>
-          ) : sessions.length === 0 ? (
-            <div className="text-center py-12">
-              <CalendarDays className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                No sessions available
-              </h3>
-              <p className="text-gray-500">
-                Check back later or try a different date.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sessions.map((session) => (
-                <SessionCard
-                  key={session.id}
-                  session={session}
-                  onBook={() => setSelectedSession(session)}
-                />
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sampleSessions.map((session) => (
+              <SessionCard
+                key={session.id}
+                session={session}
+                onBook={() => setSelectedSession(session)}
+              />
+            ))}
+          </div>
         </div>
       </main>
 
@@ -160,8 +167,7 @@ export default function Home() {
           onClose={() => setSelectedSession(null)}
           onBookingSuccess={() => {
             setSelectedSession(null)
-            fetchSessions()
-            toast.success('Booking successful!')
+            alert('Booking successful! (This is a demo - no actual booking was made)')
           }}
         />
       )}
