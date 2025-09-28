@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { CalendarDays, User } from 'lucide-react'
 
 export default function Header() {
   return (
@@ -17,14 +18,19 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-sauna-600 font-medium transition-colors">
-              Book Session
+            <Link href="/" className="text-gray-700 hover:text-sauna-600 font-medium transition-colors flex items-center space-x-1">
+              <CalendarDays className="w-4 h-4" />
+              <span>Book Session</span>
             </Link>
             <Link href="/about" className="text-gray-700 hover:text-sauna-600 font-medium transition-colors">
               About
             </Link>
             <Link href="/contact" className="text-gray-700 hover:text-sauna-600 font-medium transition-colors">
               Contact
+            </Link>
+            <Link href="/admin" className="text-gray-700 hover:text-sauna-600 font-medium transition-colors flex items-center space-x-1">
+              <User className="w-4 h-4" />
+              <span>Admin</span>
             </Link>
           </div>
         </div>
