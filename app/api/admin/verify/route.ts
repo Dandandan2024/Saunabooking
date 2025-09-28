@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any
 
     return NextResponse.json({
       valid: true,

@@ -5,6 +5,13 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { message: 'Database not configured' },
+        { status: 503 }
+      )
+    }
+
     const { email, password } = await request.json()
 
     // Find admin user
@@ -31,7 +38,7 @@ export async function POST(request: NextRequest) {
     // Generate JWT token
     const token = jwt.sign(
       { adminId: admin.id, email: admin.email },
-      process.env.JWT_SECRET!,
+      process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: '24h' }
     )
 

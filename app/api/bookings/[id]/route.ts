@@ -6,6 +6,13 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
+
     const booking = await prisma.booking.findUnique({
       where: { id: params.id },
       include: {
