@@ -1,5 +1,4 @@
 import Header from '@/components/Header'
-import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 
 export default function Contact() {
   return (
@@ -21,13 +20,13 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Information */}
           <div className="space-y-8">
-            <div className="card">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="bg-sauna-100 p-3 rounded-lg">
-                    <MapPin className="w-6 h-6 text-sauna-600" />
+                    <span className="text-sauna-600 text-xl">📍</span>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Address</h3>
@@ -41,7 +40,7 @@ export default function Contact() {
 
                 <div className="flex items-start space-x-4">
                   <div className="bg-sauna-100 p-3 rounded-lg">
-                    <Phone className="w-6 h-6 text-sauna-600" />
+                    <span className="text-sauna-600 text-xl">📞</span>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Phone</h3>
@@ -52,7 +51,7 @@ export default function Contact() {
 
                 <div className="flex items-start space-x-4">
                   <div className="bg-sauna-100 p-3 rounded-lg">
-                    <Mail className="w-6 h-6 text-sauna-600" />
+                    <span className="text-sauna-600 text-xl">✉️</span>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Email</h3>
@@ -63,7 +62,7 @@ export default function Contact() {
 
                 <div className="flex items-start space-x-4">
                   <div className="bg-sauna-100 p-3 rounded-lg">
-                    <Clock className="w-6 h-6 text-sauna-600" />
+                    <span className="text-sauna-600 text-xl">🕒</span>
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Hours</h3>
@@ -75,49 +74,10 @@ export default function Contact() {
                 </div>
               </div>
             </div>
-
-            {/* FAQ */}
-            <div className="card">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-              
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">What should I bring to my session?</h3>
-                  <p className="text-gray-600">
-                    Just bring yourself! We provide towels, water, and all necessary amenities. 
-                    Wear comfortable, loose-fitting clothing or swimwear.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">How long are the sessions?</h3>
-                  <p className="text-gray-600">
-                    Most sessions are 60 minutes, but we also offer 30-minute and 90-minute options. 
-                    Check our booking page for available session lengths.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Can I cancel or reschedule?</h3>
-                  <p className="text-gray-600">
-                    Yes! You can cancel or reschedule up to 24 hours before your session 
-                    through your booking confirmation email.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Is there parking available?</h3>
-                  <p className="text-gray-600">
-                    Yes, we have free parking available for all customers. 
-                    The parking lot is located directly behind our building.
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Contact Form */}
-          <div className="card">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
             
             <form className="space-y-6">
@@ -130,7 +90,7 @@ export default function Contact() {
                     type="text"
                     id="firstName"
                     name="firstName"
-                    className="input-field"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sauna-500 focus:border-transparent"
                     placeholder="Your first name"
                   />
                 </div>
@@ -142,7 +102,7 @@ export default function Contact() {
                     type="text"
                     id="lastName"
                     name="lastName"
-                    className="input-field"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sauna-500 focus:border-transparent"
                     placeholder="Your last name"
                   />
                 </div>
@@ -156,35 +116,9 @@ export default function Contact() {
                   type="email"
                   id="email"
                   name="email"
-                  className="input-field"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sauna-500 focus:border-transparent"
                   placeholder="your.email@example.com"
                 />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  className="input-field"
-                  placeholder="(555) 123-4567"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                  Subject
-                </label>
-                <select id="subject" name="subject" className="input-field">
-                  <option value="">Select a subject</option>
-                  <option value="booking">Booking Question</option>
-                  <option value="general">General Inquiry</option>
-                  <option value="feedback">Feedback</option>
-                  <option value="other">Other</option>
-                </select>
               </div>
 
               <div>
@@ -195,12 +129,12 @@ export default function Contact() {
                   id="message"
                   name="message"
                   rows={5}
-                  className="input-field resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sauna-500 focus:border-transparent resize-none"
                   placeholder="Tell us how we can help you..."
                 ></textarea>
               </div>
 
-              <button type="submit" className="w-full btn-primary">
+              <button type="submit" className="w-full bg-sauna-600 hover:bg-sauna-700 text-white font-medium py-3 px-4 rounded-lg transition-colors">
                 Send Message
               </button>
             </form>
