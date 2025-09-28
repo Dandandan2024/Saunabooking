@@ -15,21 +15,52 @@ export default function Home() {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null)
 
   useEffect(() => {
-    fetchSessions()
-  }, [selectedDate])
-
-  const fetchSessions = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch(`/api/sessions?date=${selectedDate.toISOString()}`)
-      const data = await response.json()
-      setSessions(data.sessions || [])
-    } catch (error) {
-      console.error('Error fetching sessions:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+    // For demo purposes, create some sample sessions
+    const sampleSessions: Session[] = [
+      {
+        id: '1',
+        title: 'Morning Wellness Session',
+        description: 'Start your day with a rejuvenating sauna session',
+        date: addDays(new Date(), 1).toISOString(),
+        startTime: '07:00',
+        endTime: '08:00',
+        capacity: 2,
+        price: 45.00,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: '2',
+        title: 'Afternoon Relaxation',
+        description: 'Perfect for unwinding after a busy day',
+        date: addDays(new Date(), 1).toISOString(),
+        startTime: '15:00',
+        endTime: '16:00',
+        capacity: 3,
+        price: 50.00,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: '3',
+        title: 'Evening Detox Session',
+        description: 'End your day with a cleansing sauna experience',
+        date: addDays(new Date(), 1).toISOString(),
+        startTime: '19:00',
+        endTime: '20:00',
+        capacity: 2,
+        price: 55.00,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ]
+    
+    setSessions(sampleSessions)
+    setLoading(false)
+  }, [])
 
   const getAvailableDates = () => {
     const dates = []
