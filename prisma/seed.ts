@@ -1,104 +1,99 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
 async function main() {
-  console.log('Starting seed...');
+  console.log('Setting up Sauna Cult database...')
 
-  // Create sample lexemes with different CEFR levels
-  const lexemes = [
-    // A1 Level
-    { lemma: 'hello', pos: 'interjection', freqRank: 1, cefr: 'A1', forms: ['hello', 'hi'] },
-    { lemma: 'good', pos: 'adjective', freqRank: 2, cefr: 'A1', forms: ['good', 'better', 'best'] },
-    { lemma: 'water', pos: 'noun', freqRank: 3, cefr: 'A1', forms: ['water', 'waters'] },
-    { lemma: 'eat', pos: 'verb', freqRank: 4, cefr: 'A1', forms: ['eat', 'eats', 'eating', 'ate', 'eaten'] },
-    { lemma: 'house', pos: 'noun', freqRank: 5, cefr: 'A1', forms: ['house', 'houses'] },
-    
-    // A2 Level
-    { lemma: 'because', pos: 'conjunction', freqRank: 50, cefr: 'A2', forms: ['because'] },
-    { lemma: 'understand', pos: 'verb', freqRank: 51, cefr: 'A2', forms: ['understand', 'understands', 'understanding', 'understood'] },
-    { lemma: 'friend', pos: 'noun', freqRank: 52, cefr: 'A2', forms: ['friend', 'friends'] },
-    { lemma: 'important', pos: 'adjective', freqRank: 53, cefr: 'A2', forms: ['important', 'more important', 'most important'] },
-    
-    // B1 Level
-    { lemma: 'suggest', pos: 'verb', freqRank: 200, cefr: 'B1', forms: ['suggest', 'suggests', 'suggesting', 'suggested'] },
-    { lemma: 'opinion', pos: 'noun', freqRank: 201, cefr: 'B1', forms: ['opinion', 'opinions'] },
-    { lemma: 'probably', pos: 'adverb', freqRank: 202, cefr: 'B1', forms: ['probably'] },
-    { lemma: 'experience', pos: 'noun', freqRank: 203, cefr: 'B1', forms: ['experience', 'experiences'] },
-    
-    // B2 Level
-    { lemma: 'despite', pos: 'preposition', freqRank: 500, cefr: 'B2', forms: ['despite'] },
-    { lemma: 'achieve', pos: 'verb', freqRank: 501, cefr: 'B2', forms: ['achieve', 'achieves', 'achieving', 'achieved'] },
-    { lemma: 'significant', pos: 'adjective', freqRank: 502, cefr: 'B2', forms: ['significant', 'more significant', 'most significant'] },
-    
-    // C1 Level
-    { lemma: 'nevertheless', pos: 'adverb', freqRank: 1000, cefr: 'C1', forms: ['nevertheless'] },
-    { lemma: 'contemplate', pos: 'verb', freqRank: 1001, cefr: 'C1', forms: ['contemplate', 'contemplates', 'contemplating', 'contemplated'] },
-  ];
+  // Create admin user
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@saunacult.com'
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123'
 
-  // Create lexemes
-  for (const lexeme of lexemes) {
-    const created = await prisma.lexeme.upsert({
-      where: { id: `seed-${lexeme.lemma}` },
+  const hashedPassword = await bcrypt.hash(adminPassword, 10)
+
+  const admin = await prisma.admin.upsert({
+    where: { email: adminEmail },
+    update: {},
+    create: {
+      email: adminEmail,
+      password: hashedPassword,
+      name: 'Admin User'
+    }
+  })
+
+  console.log('Admin user created:', admin.email)
+
+  // Create sample sessions
+  const today = new Date()
+  const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000)
+  const dayAfter = new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000)
+
+  const sampleSessions = [
+    {
+      title: 'Morning Wellness Session',
+      description: 'Start your day with a rejuvenating sauna session',
+      date: tomorrow,
+      startTime: '07:00',
+      endTime: '08:00',
+      capacity: 2,
+      price: 45.00,
+      isActive: true
+    },
+    {
+      title: 'Afternoon Relaxation',
+      description: 'Perfect for unwinding after a busy day',
+      date: tomorrow,
+      startTime: '15:00',
+      endTime: '16:00',
+      capacity: 3,
+      price: 50.00,
+      isActive: true
+    },
+    {
+      title: 'Evening Detox Session',
+      description: 'End your day with a cleansing sauna experience',
+      date: tomorrow,
+      startTime: '19:00',
+      endTime: '20:00',
+      capacity: 2,
+      price: 55.00,
+      isActive: true
+    },
+    {
+      title: 'Weekend Special',
+      description: 'Extended session for maximum relaxation',
+      date: dayAfter,
+      startTime: '10:00',
+      endTime: '11:30',
+      capacity: 4,
+      price: 75.00,
+      isActive: true
+    }
+  ]
+
+  for (const sessionData of sampleSessions) {
+    const session = await prisma.session.upsert({
+      where: {
+        id: `${sessionData.date.toISOString().split('T')[0]}-${sessionData.startTime}`
+      },
       update: {},
-      create: {
-        id: `seed-${lexeme.lemma}`,
-        ...lexeme
-      }
-    });
-    console.log(`Created lexeme: ${created.lemma}`);
+      create: sessionData
+    })
+    console.log('Sample session created:', session.title)
   }
 
-  // Create sample sentences for placement (seed sentences)
-  const seedSentences = [
-    // A1 sentences
-    { lexemeId: 'seed-hello', textL2: 'Hello, how are you?', textL1: 'Hola, ¿cómo estás?', cefr: 'A1', difficulty: 0.1, targetForm: 'hello' },
-    { lexemeId: 'seed-good', textL2: 'This is good food.', textL1: 'Esta es buena comida.', cefr: 'A1', difficulty: 0.15, targetForm: 'good' },
-    { lexemeId: 'seed-water', textL2: 'I drink water every day.', textL1: 'Bebo agua todos los días.', cefr: 'A1', difficulty: 0.2, targetForm: 'water' },
-    
-    // A2 sentences
-    { lexemeId: 'seed-because', textL2: 'I study because I want to learn.', textL1: 'Estudio porque quiero aprender.', cefr: 'A2', difficulty: 0.3, targetForm: 'because' },
-    { lexemeId: 'seed-understand', textL2: 'I understand what you mean.', textL1: 'Entiendo lo que quieres decir.', cefr: 'A2', difficulty: 0.35, targetForm: 'understand' },
-    
-    // B1 sentences
-    { lexemeId: 'seed-suggest', textL2: 'I suggest we meet tomorrow.', textL1: 'Sugiero que nos encontremos mañana.', cefr: 'B1', difficulty: 0.5, targetForm: 'suggest' },
-    { lexemeId: 'seed-opinion', textL2: 'In my opinion, this is correct.', textL1: 'En mi opinión, esto es correcto.', cefr: 'B1', difficulty: 0.55, targetForm: 'opinion' },
-    
-    // B2 sentences
-    { lexemeId: 'seed-despite', textL2: 'Despite the rain, we went outside.', textL1: 'A pesar de la lluvia, salimos.', cefr: 'B2', difficulty: 0.7, targetForm: 'despite' },
-    { lexemeId: 'seed-achieve', textL2: 'You can achieve your goals with hard work.', textL1: 'Puedes lograr tus metas con trabajo duro.', cefr: 'B2', difficulty: 0.75, targetForm: 'achieve' },
-  ];
-
-  // Create sentences
-  for (const sentence of seedSentences) {
-    const uniqueHash = Buffer.from(`${sentence.lexemeId}-${sentence.textL2}`).toString('base64').slice(0, 16);
-    
-    const created = await prisma.sentence.upsert({
-      where: { uniqueHash },
-      update: {},
-      create: {
-        targetLexemeId: sentence.lexemeId,
-        textL2: sentence.textL2,
-        textL1: sentence.textL1,
-        cefr: sentence.cefr,
-        difficulty: sentence.difficulty,
-        tokens: sentence.textL2.toLowerCase().split(' '),
-        source: 'seed',
-        targetForm: sentence.targetForm,
-        uniqueHash
-      }
-    });
-    console.log(`Created sentence for: ${sentence.targetForm}`);
-  }
-
-  console.log('Seed completed!');
+  console.log('Setup completed successfully!')
+  console.log('Admin credentials:')
+  console.log('Email:', adminEmail)
+  console.log('Password:', adminPassword)
 }
 
 main()
   .catch((e) => {
-    console.error('Seed failed:', e);
-    process.exit(1);
+    console.error('Setup failed:', e)
+    process.exit(1)
   })
   .finally(async () => {
-    await prisma.$disconnect();
-  });
+    await prisma.$disconnect()
+  })
