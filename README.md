@@ -1,182 +1,234 @@
-# 🏠 Sauna Cult Booking System
+# 🧖‍♀️ Sauna Cult - Premium Sauna Booking System
 
-A modern, user-friendly web application for booking sauna sessions with integrated payments and admin management.
+A modern, full-featured sauna booking system built with Next.js 14, TypeScript, Prisma, and Stripe.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/sauna-cult-booking)
+## ✨ Features
 
-## ✨ Live Demo
+### 🎯 Customer Features
+- **Easy Session Booking** - Browse and book sauna sessions with just a few clicks
+- **Real-time Availability** - See live session availability and capacity
+- **Secure Payments** - Integrated Stripe payment processing
+- **Mobile Responsive** - Beautiful design that works on all devices
+- **Session Management** - View and manage your bookings
 
-🚀 **Deployed on Vercel**: [sauna-cult-booking.vercel.app](https://sauna-cult-booking.vercel.app)
+### 🔧 Admin Features
+- **Dashboard** - Comprehensive admin dashboard with statistics
+- **Session Management** - Create, edit, and manage sauna sessions
+- **Booking Management** - View and manage all customer bookings
+- **User Management** - Track customer information and booking history
+- **Revenue Tracking** - Monitor earnings and booking statistics
 
-### Demo Credentials
-- **Admin Email**: admin@saunacult.com
-- **Admin Password**: admin123
+## 🚀 Quick Start
 
-## Features
+### Prerequisites
+- Node.js 18+ 
+- PostgreSQL database
+- Stripe account (for payments)
 
-### Customer Features
-- 🏠 **Beautiful Homepage** - Modern, responsive design with clear session display
-- 📅 **Easy Booking** - Simple date selection and session booking
-- 💳 **Secure Payments** - Integrated Stripe payment processing
-- ✅ **Instant Confirmation** - Real-time booking confirmation with payment success
-- 📱 **Mobile Responsive** - Works perfectly on all devices
-
-### Admin Features
-- 🔐 **Secure Authentication** - Admin login with JWT tokens
-- 📊 **Dashboard** - Overview of bookings, revenue, and sessions
-- 📅 **Session Management** - Create, edit, and manage sauna sessions
-- 👥 **Booking Management** - View and manage all customer bookings
-- 💰 **Revenue Tracking** - Monitor earnings and booking statistics
-
-## Tech Stack
-
-- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes, Prisma ORM
-- **Database**: PostgreSQL
-- **Payments**: Stripe
-- **Authentication**: JWT tokens with bcrypt
-- **UI Components**: Headless UI, Heroicons, Lucide React
-
-## Quick Start
-
-### 1. Install Dependencies
-
+### 1. Clone and Install
 ```bash
+git clone https://github.com/Dandandan2024/Saunabooking.git
+cd Saunabooking
 npm install
 ```
 
 ### 2. Environment Setup
-
-Copy the example environment file:
-
-```bash
-cp .env.example .env.local
-```
-
-Update `.env.local` with your configuration:
-
+Create a `.env.local` file:
 ```env
 # Database
 DATABASE_URL="postgresql://username:password@localhost:5432/sauna_cult"
 
 # Stripe (get from https://stripe.com)
-STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+STRIPE_SECRET_KEY="sk_test_..."
 
 # JWT Secret (generate a random string)
-JWT_SECRET=your-super-secret-jwt-key
+JWT_SECRET="your-super-secret-jwt-key"
 
 # Admin Credentials
-ADMIN_EMAIL=admin@saunacult.com
-ADMIN_PASSWORD=secure-admin-password
+ADMIN_EMAIL="admin@saunacult.com"
+ADMIN_PASSWORD="admin123"
 ```
 
 ### 3. Database Setup
-
-Generate Prisma client and run migrations:
-
 ```bash
+# Generate Prisma client
 npx prisma generate
+
+# Push schema to database
 npx prisma db push
+
+# Seed with sample data
+npm run db:seed
 ```
 
-### 4. Initialize Database
-
-Run the setup script to create admin user and sample sessions:
-
-```bash
-npx tsx scripts/setup.ts
-```
-
-### 5. Start Development Server
-
+### 4. Run Development Server
 ```bash
 npm run dev
 ```
 
-Visit `http://localhost:3000` to see the booking system in action!
+Visit `http://localhost:3000` to see your sauna booking system!
 
-## Admin Access
+## 🏗️ Architecture
 
-- **URL**: `http://localhost:3000/admin`
-- **Default Email**: `admin@saunacult.com`
-- **Default Password**: `admin123`
+### Tech Stack
+- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes, Prisma ORM
+- **Database**: PostgreSQL
+- **Payments**: Stripe
+- **Authentication**: JWT tokens
+- **UI Components**: Headless UI, Heroicons, Lucide React
 
-*Change these credentials in your `.env.local` file for production!*
+### Database Schema
+```prisma
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  phone     String?
+  bookings  Booking[]
+}
 
-## Stripe Setup
+model Session {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  startTime   String
+  endTime     String
+  capacity    Int
+  price       Float
+  isActive    Boolean
+  bookings    Booking[]
+}
 
+model Booking {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String
+  status    String   // pending, confirmed, cancelled
+  paymentId String?
+  user      User     @relation(fields: [userId], references: [id])
+  session   Session  @relation(fields: [sessionId], references: [id])
+}
+```
+
+## 📱 Pages & Features
+
+### Customer Pages
+- **Home** (`/`) - Browse and book sessions
+- **About** (`/about`) - Learn about Sauna Cult
+- **Contact** (`/contact`) - Get in touch
+- **Payment** (`/payment`) - Secure checkout process
+- **Success** (`/payment/success`) - Booking confirmation
+
+### Admin Pages
+- **Admin Login** (`/admin/login`) - Secure admin authentication
+- **Dashboard** (`/admin`) - Overview and statistics
+- **Session Management** - Create and manage sessions
+- **Booking Management** - View and manage bookings
+
+## 🔐 Admin Access
+
+**Default Admin Credentials:**
+- Email: `admin@saunacult.com`
+- Password: `admin123`
+
+*Change these in production!*
+
+## 💳 Payment Integration
+
+The system uses Stripe for secure payment processing:
+
+1. **Test Mode**: Use Stripe test keys for development
+2. **Production**: Replace with live keys for production
+3. **Webhooks**: Configure Stripe webhooks for payment confirmations
+
+### Stripe Setup
 1. Create a Stripe account at [stripe.com](https://stripe.com)
-2. Get your API keys from the Stripe Dashboard
+2. Get your API keys from the dashboard
 3. Add them to your `.env.local` file
-4. For production, use live keys instead of test keys
+4. Test with Stripe's test card numbers
 
-## Database Schema
-
-The application uses the following main entities:
-
-- **Users**: Customer information (email, name, phone)
-- **Sessions**: Sauna session details (date, time, price, capacity)
-- **Bookings**: Customer bookings with payment status
-- **Admins**: Admin users for system management
-
-## API Endpoints
-
-### Public Endpoints
-- `GET /api/sessions` - Get available sessions for a date
-- `POST /api/bookings` - Create a new booking
-- `GET /api/bookings/[id]` - Get booking details
-
-### Admin Endpoints
-- `POST /api/admin/login` - Admin authentication
-- `GET /api/admin/verify` - Verify admin token
-- `GET /api/admin/stats` - Get dashboard statistics
-- `GET /api/admin/sessions` - Get all sessions
-- `POST /api/admin/sessions` - Create new session
-- `PATCH /api/admin/sessions/[id]` - Update session
-- `DELETE /api/admin/sessions/[id]` - Delete session
-- `GET /api/admin/bookings` - Get all bookings
-- `PATCH /api/admin/bookings/[id]` - Update booking status
-
-## Deployment
+## 🚀 Deployment
 
 ### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Add environment variables in Vercel dashboard
+1. Push to GitHub
+2. Connect to Vercel
+3. Add environment variables
 4. Deploy!
 
-### Other Platforms
+### Manual Deployment
+1. Build the project: `npm run build`
+2. Start production server: `npm start`
+3. Set up PostgreSQL database
+4. Configure environment variables
 
-The app can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
+## 🛠️ Development
 
-Make sure to set up a PostgreSQL database and configure all environment variables.
+### Available Scripts
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run db:push      # Push schema to database
+npm run db:seed      # Seed database with sample data
+```
 
-## Customization
+### Project Structure
+```
+├── app/                 # Next.js app directory
+│   ├── api/            # API routes
+│   ├── admin/          # Admin pages
+│   ├── payment/        # Payment pages
+│   └── page.tsx        # Home page
+├── components/          # React components
+├── lib/                # Utility libraries
+├── prisma/             # Database schema and migrations
+├── types/              # TypeScript type definitions
+└── public/             # Static assets
+```
 
-### Styling
-- Modify `tailwind.config.js` to change colors and theme
-- Update `app/globals.css` for custom styles
-- Brand colors are defined in the `sauna` color palette
+## 🎨 Customization
+
+### Branding
+- Update colors in `tailwind.config.js`
+- Replace logo and branding in components
+- Customize the hero section and messaging
 
 ### Features
-- Add email notifications in `lib/email.ts`
-- Extend booking with additional fields in the Prisma schema
-- Add more payment methods by extending Stripe integration
+- Add email notifications
+- Implement user accounts
+- Add session reviews and ratings
+- Create membership tiers
 
-## Support
+## 📊 Analytics & Monitoring
 
-For issues and questions:
-1. Check the console for error messages
-2. Verify all environment variables are set correctly
-3. Ensure database is properly connected
-4. Check Stripe keys are valid and have proper permissions
+The system includes built-in tracking for:
+- Session bookings and revenue
+- User engagement
+- Admin activity
+- Payment success rates
 
-## License
+## 🔒 Security
 
-MIT License - feel free to use this project for your own sauna business!
+- JWT-based authentication
+- Secure password hashing with bcrypt
+- Input validation and sanitization
+- CSRF protection
+- Rate limiting on API endpoints
+
+## 📞 Support
+
+For support or questions:
+- Email: hello@saunacult.com
+- GitHub Issues: [Create an issue](https://github.com/Dandandan2024/Saunabooking/issues)
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+**Built with ❤️ for the Sauna Cult community**
