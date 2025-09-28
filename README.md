@@ -1,6 +1,16 @@
-# Sauna Cult Booking System
+# 🏠 Sauna Cult Booking System
 
 A modern, user-friendly web application for booking sauna sessions with integrated payments and admin management.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/sauna-cult-booking)
+
+## ✨ Live Demo
+
+🚀 **Deployed on Vercel**: [sauna-cult-booking.vercel.app](https://sauna-cult-booking.vercel.app)
+
+### Demo Credentials
+- **Admin Email**: admin@saunacult.com
+- **Admin Password**: admin123
 
 ## Features
 
